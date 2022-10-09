@@ -2,23 +2,32 @@ const mongoose = require("mongoose");
 
 ///스키마 이름을 적어서 스키마를 저장할 타입을 정함
 const commentsSchema = new mongoose.Schema({
-  _postId: {
-    type: String,
-    required: true
+  postId: {
+    type: Number,
+    required: true, //필수 요소
+    unique: true ///하나만 가질수 있게함
   },
-  user: {
+  userId: {
+    type: Number,
+    required: true, //필수 요소
+    unique: true ///하나만 가질수 있게함
+  },
+  commentId:{
+    type: Number,
+    required: true, //필수 요소
+    unique: true
+  },
+  nickname: {
     type: String,
     required: true, //정보를 확인 하고 할것이냐
   },
-  password: {
-    type: String,
-    required: true,
-
-  },
-  content: {
+  comment: {
     type: String
   },
   createdAt: {
+    type: Date
+  },
+  udateAt: {
     type: Date
   },
 

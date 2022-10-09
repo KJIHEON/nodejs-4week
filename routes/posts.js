@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const authMiddleware = require('../middlewares/auth-middleware')
 const Post = require('../models/posts'); //폴더 밖에 나가서 경로를 찾아서 ../넣음
 
 // try{실행할코드}catch(error){ //catch가 에러를 받는다.

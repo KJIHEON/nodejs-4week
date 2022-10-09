@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const connect = () => {
   mongoose
-    .connect("mongodb://localhost:27017/nodejs1")
+    .connect("mongodb://localhost:27017/nodejslogin")
     .catch(err => console.log(err));
     console.log('db 연결완료입니다')
 };

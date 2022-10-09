@@ -1,13 +1,18 @@
 
 const mongoose = require("mongoose");
 
-const postsSchema = new mongoose.Schema({ // 어떤 스키마에 넣을껀지 
-  user: {
-    type: String,
+const postsSchema = new mongoose.Schema({ // 어떤 스키마에 넣을껀지
+  postId: {
+    type: Number,
     required: true, //필수 요소
     unique: true ///하나만 가질수 있게함
   },
-  password: {
+  userId: {
+    type: Number,
+    required: true, //필수 요소
+    unique: true ///하나만 가질수 있게함
+  },
+  nickname: {
     type: String,
     required: true,
   },
@@ -19,6 +24,12 @@ const postsSchema = new mongoose.Schema({ // 어떤 스키마에 넣을껀지
   },
   createdAt:{ //작성 날짜를 넣어주는 스키마
     type: Date
+  },
+  updateAt:{ //작성 날짜를 넣어주는 스키마
+    type: Date
+  },
+  likes:{ //작성 날짜를 넣어주는 스키마
+    type : Number
   },
 })
 
