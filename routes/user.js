@@ -1,11 +1,12 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const router = express.Router();
+const app = express()
 const Joi = require("joi");
-const authMiddleware = require('../middlewares/auth-middleware')
 const jwt = require('jsonwebtoken')
-const User = require('../models/user'); //폴더 밖에 나가서 경로를 찾아서 ../넣음
-const user = require('../models/user');
+const { User } = require("../models"); //폴더 밖에 나가서 경로를 찾아서 ../넣음
 
+app.use(cookieParser())
 //회원가입 검증
 const user_Signup = Joi.object({ //문자열에 최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9)
   nickname : Joi.string().pattern((new RegExp('^[a-zA-Z0-9]{3,30}$'))).required(),
@@ -15,6 +16,13 @@ const user_Signup = Joi.object({ //문자열에 최소 3자 이상, 알파벳 �
 
 router.post('/signup',async (req,res)=>{
   try{
+      // const {authorization} = req.headers
+      // if(authorization){
+      //  res.status(401).send({
+      //   errorMessage : '이미 로그인 했음'
+      //  })
+      //   return;
+      //   }
   const { nickname , password , confirm} = await user_Signup.validateAsync(req.body);  //정보를 받아옴
       console.log(nickname , password , confirm)
     if (password == nickname){  //비밀번호 닉네임 중복검사
@@ -36,9 +44,10 @@ router.post('/signup',async (req,res)=>{
         })
         return;
     } 
-    const user = new User({nickname, password,confirm})
-    await user.save();
+    const userOne = new User({nickname, password,confirm})
+    await userOne.save();
     res.status(201).send({msg : "회원가입완료"})
+  
   }catch(error){
     console.log(error)
     res.status(400).send({'message': "회원가입 error"})
@@ -46,7 +55,15 @@ router.post('/signup',async (req,res)=>{
   })
 
 
-router.post('/login', async (req,res)=>{
+router.post('/login',async (req,res)=>{
+  try{
+    const { tokens } = req.cookies
+    if(tokens){
+      res.status(401).send({
+      errorMessage : '이미 로그인 했음'
+      })
+      return;
+      }
   const { nickname , password} = req.body
   console.log(nickname, password) 
   const userOne = await User.findOne({nickname,password}) //구조분해로 확인 해서 가져온다.
@@ -61,7 +78,12 @@ router.post('/login', async (req,res)=>{
   const token = jwt.sign({userId : userOne.userId },"key")
   res.send({
     token,
+    msg : "로그인 완료"
   })
+  }catch(error){
+  console.log(error)
+  res.status(400).send({'message': "회원가입 error"})
+  }
 })
 
 module.exports = router;

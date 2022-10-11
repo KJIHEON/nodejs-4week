@@ -1,14 +1,24 @@
-const mongoose = require("mongoose");
-
-const UserSchema = new mongoose.Schema({
-  nickname: String,
-  password: String,
-  confirm: String,
-});
-UserSchema.virtual("userId").get(function () {
-  return this._id.toHexString();
-});             // ObjectID 형태의 id를 24바이트의 hex 문자열로 바꾸어 리턴해주는 함수입니다.
-UserSchema.set("toJSON", {
-  virtuals: true,
-});
-module.exports = mongoose.model("User", UserSchema)
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+    }
+  }
+  User.init({
+    nickname: DataTypes.STRING,
+    password: DataTypes.STRING
+  }, {
+    sequelize,
+    modelName: 'User',
+  });
+  return User;
+};

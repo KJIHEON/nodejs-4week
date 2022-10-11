@@ -1,20 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware')
-const comments = require('../models/comments');
+const { comments } = require("../models");
 
 
 // 댓글 작성 
 //포스트 아이디를 같이 집어넣어줘서 해당 게시글의 댓글이란걸 알수있음
-  router.post('/:_postId', async (req,res)=>{
+  router.post('/:postId', async (req,res)=>{
   try{
-      const { _postId } = req.params;                         //입력받은 아이디값이들어옴
+      const { postId } = req.params;                         //입력받은 아이디값이들어옴
       const {user, password, content} = req.body;             //저장해야할 정보를 받아와서 변수에 등록시킨다. req.body에 정보가 들어있음
       const createdAt = new Date();                           //날짜  넣어주기
       if(content == ""){                                    //content 댓글이 빈칸일시 문구 반환 댓글 보내주기
       res.status(400).send({'message': "댓글을 입력해주세요"});
       }else{                                                 //스키마 comments 아이디로 정보를 저장하고 만들어줌
-      await comments.create({ _postId ,user , password, content, createdAt}); //스키마.db에 정보를 만들어준다
+      await comments.create({ postId ,user , password, content, createdAt}); //스키마.db에 정보를 만들어준다
       res.status(201).send({'message': "댓글을 생성하였습니다."});    //메세지 생성 제이슨 형식으로 응답해줌
       }
     } catch(error){ //catch가 에러를 받는다.
@@ -24,10 +24,10 @@ const comments = require('../models/comments');
   })
 
   //해당 게시물 댓글 가져오기
-  router.get('/:_postId',async (req,res)=>{
+  router.get('/:postId',async (req,res)=>{
   try{
-      const { _postId } = req.params    //아이디 값을 받아온다 //파라미터로 받아온 아이디와 몽고디비에 저장된 아이디 중 일치하는것을 찾아서 가져온다.                                                                                 
-      const commentAll = await comments.find({_postId}).sort({createdAt: "desc" }) //.sort({ createdAt: "desc" }) createdAt기준으로 내림차순
+      const { postId } = req.params    //아이디 값을 받아온다 //파라미터로 받아온 아이디와 몽고디비에 저장된 아이디 중 일치하는것을 찾아서 가져온다.                                                                                 
+      const commentAll = await comments.find({postId}).sort({createdAt: "desc" }) //.sort({ createdAt: "desc" }) createdAt기준으로 내림차순
       const comment = commentAll.map((comment)=> {                     //map은 하나씩 순회하여 값을 복사해줌 [1,2,3,4,5] 배열로 반환된다.
       return {  
       commentId : comment._id,
