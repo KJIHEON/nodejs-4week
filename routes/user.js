@@ -1,12 +1,9 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const router = express.Router();
-const app = express()
 const Joi = require("joi");
 const jwt = require('jsonwebtoken')
 const { User } = require("../models"); //폴더 밖에 나가서 경로를 찾아서 ../넣음
 
-app.use(cookieParser())
 //회원가입 검증
 const user_Signup = Joi.object({ //문자열에 최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9)
   nickname : Joi.string().pattern((new RegExp('^[a-zA-Z0-9]{3,30}$'))).required(),
@@ -16,13 +13,12 @@ const user_Signup = Joi.object({ //문자열에 최소 3자 이상, 알파벳 �
 
 router.post('/signup',async (req,res)=>{
   try{
-      // const {authorization} = req.headers
-      // if(authorization){
-      //  res.status(401).send({
-      //   errorMessage : '이미 로그인 했음'
-      //  })
-      //   return;
-      //   }
+    if(req.cookies.token){ //로그인 중복 검사 쿠키에 받아옴
+      res.status(401).send({
+      errorMessage : '이미 로그인이 되어있습니다.'
+      })
+      return;
+      }
   const { nickname , password , confirm} = await user_Signup.validateAsync(req.body);  //정보를 받아옴
       console.log(nickname , password , confirm)
     if (password == nickname){  //비밀번호 닉네임 중복검사
@@ -37,7 +33,7 @@ router.post('/signup',async (req,res)=>{
       })
       return;
     } 
-      const users = await User.findAll({
+      const users = await User.findAll({ //조건을 걸어 같은 닉네임이 있는걸 가져옴
        where : {
         nickname,
        }
@@ -57,12 +53,12 @@ router.post('/signup',async (req,res)=>{
   }
   })
 
-
+ //로그인 
 router.post('/login',async (req,res)=>{
   try{
-    if(req.cookies){
+    if(req.cookies.token){  //검증
       res.status(401).send({
-      errorMessage : '이미 로그인 했음'
+      errorMessage : '이미 로그인이 되어있습니다.'
       })
       return;
       }
