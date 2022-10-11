@@ -37,17 +37,20 @@ router.post('/signup',async (req,res)=>{
       })
       return;
     } 
-      const users = await User.findOne({nickname})
-    if (users){ //닉네임 중복검사
+      const users = await User.findAll({
+       where : {
+        nickname,
+       }
+      });
+     console.log(users.length)
+  if (users.length){ //닉네임 중복검사 길이로 비교해서 있으면 중복된 닉네임
         res.status(400).send({
           errorMessage: "중복된 닉네임입니다.",
         })
         return;
-    } 
-    const userOne = new User({nickname, password,confirm})
-    await userOne.save();
+    }
+    await User.create({nickname, password})
     res.status(201).send({msg : "회원가입완료"})
-  
   }catch(error){
     console.log(error)
     res.status(400).send({'message': "회원가입 error"})
@@ -57,32 +60,35 @@ router.post('/signup',async (req,res)=>{
 
 router.post('/login',async (req,res)=>{
   try{
-    const { tokens } = req.cookies
-    if(tokens){
+    if(req.cookies){
       res.status(401).send({
       errorMessage : '이미 로그인 했음'
       })
       return;
       }
   const { nickname , password} = req.body
-  console.log(nickname, password) 
-  const userOne = await User.findOne({nickname,password}) //구조분해로 확인 해서 가져온다.
-  console.log(userOne)
+  // console.log(nickname, password) 
+  const user =await User.findOne({
+    where: {
+     nickname,
+    },
+  });
+  console.log(!user)
     //유저가 없거나 또는 패스워드가 일치하지 않을시 에러
-  if (!userOne || password !== userOne.password){
+  if (!user || password !== user.password){
     res.status(400).send({  //kim3108  Kim3108
       errorMessage: "닉네임 또는 패스워드를 확인해주세요",
     })
     return;
   }
-  const token = jwt.sign({userId : userOne.userId },"key")
+  const token = jwt.sign({userId : user.userId },"key")
+  res.cookie('token',token); ///쿠키에다가 토큰을 보내준다 (미들웨어로 확인함)
   res.send({
     token,
-    msg : "로그인 완료"
   })
   }catch(error){
   console.log(error)
-  res.status(400).send({'message': "회원가입 error"})
+  res.status(400).send({'message': "로그인 error"})
   }
 })
 

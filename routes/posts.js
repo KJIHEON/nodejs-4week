@@ -1,7 +1,10 @@
 const express = require('express');
+const app = express()
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
 const { Post } = require("../models"); //폴더 밖에 나가서 경로를 찾아서 ../넣음
+const cookieParser = require('cookie-parser');
+app.use(cookieParser())
  //폴더 밖에 나가서 경로를 찾아서 ../넣음
 
 
@@ -41,7 +44,7 @@ router.post('/',async (req, res) => {   //post누르면 정보가 담겨있음  
 
 
 //게시글 조회 내림차순
-router.get('/',async (req,res)=>{// get으로 데이터를 불러올꺼임
+router.get('/',authMiddleware,async (req,res)=>{// get으로 데이터를 불러올꺼임
   try{
   const posts = await Post.find().sort({ createdAt: "desc" }) ////내림차순 차을때 사용한다!!!! //.sort("-createdAt");
   const post = posts.map((post)=> {   //배열 순회 하면서 복제 시킨다.(배열에서만 쓸수있다.) .map((순회하는 배열하는 아이템)=>{바꿔주는 함수(비지니스 로직)})
