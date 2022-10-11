@@ -100,8 +100,7 @@ router.put("/:postId",authMiddleware, async (req, res) => {
   try{
       const { postId } = req.params;                 //아이디 정보를 받아옴 내가 put누르면 정보가 담겨있음
       const {title, content} = req.body;   //바디에 내가 적으면 여기에 뜸 헷갈리면 찍어보자
-                  // pw워드가 일치하면 정보수정할수있게 
-      await Post.update({ //put같은거
+      await Post.update({ 
         title : title,
         content : content,},
         {
