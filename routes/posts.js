@@ -21,7 +21,7 @@ router.post('/',authMiddleware,async (req, res) => {   //post누르면 정보가
     const { title, content, } = req.body; //저장해야할 정보를 받아와서 변수에 등록시킨다. req.body에 정보가 들어있음
     const createdAt = new Date(); //날짜 지정 yyyddmmm이거 쓰기 나중에 하자!!
     const updateAt = new Date();
-    await Post.create({
+    await Post.create({ //게시글 작성 생성
       userId : user.userId,
       nickname : user.nickname,
       title : title, 
@@ -46,7 +46,7 @@ router.get('/',async (req,res)=>{// get으로 데이터를 불러올꺼임 .sort
   console.log(posts)
   console.log(posts.createdAt)
   const post = posts.map((post)=> {   //배열 순회 하면서 복제 시킨다.(배열에서만 쓸수있다.) .map((순회하는 배열하는 아이템)=>{바꿔주는 함수(비지니스 로직)})
-      return {  ///필요값만 보여주기 위함   //filter() ,find()  숙제 같이쓴다.
+      return {  ///필요값만 보여주기 위함 
         postId : post.postId,
         userId : post.userId,
         nickname : post.nickname,
@@ -72,8 +72,8 @@ router.get('/:postId' ,async (req,res)=>{
         where: { postId, }
        }); //Post.findOne({_id :_postId}), 아이디가 일치하는것을 찾아옴
        console.log(postOne)
-       const post = {       //map함수는 배열이 여러개 일때 사용하면 좋다. 1개일때는 불필요한 코드
-        postId : postOne.postId,   //재할당해서 변수에 넣어준다. postOne의 값을 ._id등등 필요한 값만 추출해서() 키값 : 추출한 값으로 바꿔줌)
+       const post = {     //재할당으로 원하는거만 보여주기
+        postId : postOne.postId,   
         userId : postOne.userId,
         nickname : postOne.nickname,
         title : postOne.title,
@@ -98,11 +98,11 @@ router.put("/:postId",authMiddleware, async (req, res) => {
   try{
       const { postId } = req.params;                 //아이디 정보를 받아옴 내가 put누르면 정보가 담겨있음
       const {title, content} = req.body;   //바디에 내가 적으면 여기에 뜸 헷갈리면 찍어보자
-      await Post.update({ 
-        title : title,
+      await Post.update({  //시퀄라이즈 언어 수정하는거
+        title : title, //타이틀과 콘텐트를 수정하겠다
         content : content,},
         {
-        where : {postId : postId}
+        where : {postId : postId} //포스트 아이디에 맞는걸 찾아서
       });
    
     res.status(201).send({message: "게시글을 수정하였습니다."})
@@ -117,7 +117,7 @@ router.put("/:postId",authMiddleware, async (req, res) => {
 //게시물 지우기 비밀번호 적어서 해야함
 router.delete("/:postId",authMiddleware, async (req, res) => {
   try{
-  const { postId } = req.params;                        //아이디 정보를 받아온다 delete 누르면 작동함
+  const { postId } = req.params;       //아이디 정보를 받아온다 delete 누르면 작동함
   await Post.destroy({
     where: {
       postId: postId
