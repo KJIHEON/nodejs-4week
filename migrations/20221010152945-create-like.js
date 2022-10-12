@@ -24,21 +24,6 @@ module.exports = {
           },
         type: Sequelize.INTEGER,
       },
-      nickname: {
-        type: Sequelize.STRING
-      },
-      title: {
-        type: Sequelize.STRING
-      },
-      likes: {
-        type: Sequelize.INTEGER
-      },
-      createdAt: {
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
-      }
     });
   },
   async down(queryInterface, Sequelize) {

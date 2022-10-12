@@ -14,14 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Like.init({
+    id:{type : DataTypes.INTEGER,
+      primaryKey:true},
     postId: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
-    nickname: DataTypes.STRING,
-    title: DataTypes.STRING,
-    likes: DataTypes.INTEGER,  
-    createdAt : DataTypes.DATE,
-    updatedAt : DataTypes.DATE,
   }, {
+    
     sequelize,
     modelName: 'Like',
   });

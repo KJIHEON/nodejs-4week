@@ -69,9 +69,7 @@ router.get('/:postId' ,async (req,res)=>{
   try{
        const { postId } = req.params; //썬더에 입력하면 정보 받아옴
        const postOne = await Post.findOne({
-        where: {
-          postId,
-         },
+        where: { postId, }
        }); //Post.findOne({_id :_postId}), 아이디가 일치하는것을 찾아옴
        console.log(postOne)
        const post = {       //map함수는 배열이 여러개 일때 사용하면 좋다. 1개일때는 불필요한 코드
@@ -81,7 +79,7 @@ router.get('/:postId' ,async (req,res)=>{
         title : postOne.title,
         content : postOne.content,
         createdAt :postOne.createdAt,
-        updateAt :postOne.updatedAt,
+        updatedAt :postOne.updatedAt,
         likes : postOne.likes
         }
         res.status(200).json({ data: post}) //중괄호에 바로 리턴가능 변수로 안빼고

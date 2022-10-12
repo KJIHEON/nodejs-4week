@@ -5,44 +5,78 @@ const { Like } = require("../models"); //폴더 밖에 나가서 경로를 찾�
 const { Post } = require("../models")
 
 
-
-router.get('/posts/like',async(req,res)=>{
-  const likeAll = await Like.findAll({order: [['createdAt', 'DESC']]})
-  const like = Like.map((likeAll)=> {   //배열 순회 하면서 복제 시킨다.(배열에서만 쓸수있다.) .map((순회하는 배열하는 아이템)=>{바꿔주는 함수(비지니스 로직)})
-    return {  ///필요값만 보여주기 위함   //filter() ,find()  숙제 같이쓴다.
-      postId : likeAll.postId,
-      userId : likeAll.userId,
-      nickname : likeAll.nickname,
-      title :  likeAll.title, 
-      createdAt : likeAll.createdAt,
-      updatedAt : likeAll.updatedAt,
-      likes : likeAll.likes,
+//내가 좋아요한 게시물 가져오기
+router.get('/posts/like',authMiddleware,async(req,res)=>{
+  const {userId}  = res.locals.user
+  const likes = await Like.findAll({  //종아요 게시글 불러옴 유저
+    where :{
+    userId
     }
   })
-  res.status(200).json({data : like});
-  })
-//포스트아이디 불러옴
+  const PostIds = likes.map((likes)=>
+    likes.postId
+  )
+  const data = []
+  for (const postId of PostIds){
+    const row = await Post.findOne({
+      where :{
+        postId : postId
+      }, attributes: {exclude : ['content']}, //, attributes: {exclude : ['content']} 필요하는거만 찾아옴
+    })
+    const datas = {       
+      postId : row.postId,   
+      userId : row.userId,
+      nickname : row.nickname,
+      title : row.title,
+      createdAt :row.createdAt,
+      updatedAt :row.updatedAt,
+      likes : row.likes
+      }
+      data.push(datas)
+  }
+    data.sort((a,b)=>b.likes-a.likes)
+    res.status(200).json({data});
+})
 
 
+//좋아요 하기
 router.put('/posts/:postId/like',authMiddleware,async(req,res)=>{
+  try{
   const {userId} = res.locals.user 
   const {postId} = req.params
-  console.log(userId)
-  console.log(postId)
-    // console.log(postId)
-  const createLike = await Post.findOne({ where :{postId,userId}})
-  console.log(createLike.likes)
-  await Post.update({ //put같은거
-    likes : 0},
+  const posts = await Post.findOne({ where :{postId}})
+  const likes =await Like.findOne({ where :{postId,userId}})
+  console.log(likes)
+  if (!likes){
+  await Post.increment({ //put같은거
+    likes : 1},
     {
     where : {postId : postId}
   });
-  // await Like.update({ //put같은거
-  //   likes : (likes+1)},
-  //   {
-  //   where : {postId : postId}
-  // });
-  res.status(200).json({data : "잘보내짐 ㅇㅇ"});
+  await Like.create({
+    userId : userId,
+    postId : postId,
+    })
+    res.status(201).send({"message":"게시글의 좋아요를 등록하였습니다."});
+  }else{
+    await Post.increment({ //put같은거
+      likes : -1},
+      {
+      where : {postId : postId}
+    });
+    await Like.destroy({
+      where: {
+        postId: postId,
+        userId: userId,
+      }
+      })
+    res.status(201).send({"message":"게시글의 좋아요를 취소하였습니다"});
+  }
+  }catch(error){ 
+  console.log(error)
+  res.status(400).send({'message': "좋아요 에러 error"}) 
+  }   
 })
+
 
 module.exports = router;

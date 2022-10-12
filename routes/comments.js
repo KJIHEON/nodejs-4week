@@ -68,7 +68,7 @@ router.put('/:commentId', authMiddleware,async (req,res)=>{    //일단 아이�
        if(user.userId !== findUser.userId){ //예외 처리
         res.status(400).send({'message': "작성자와 일치 하지 않습니다."})
           return
-       }        
+       }     
         await Comments.update({ //put같은거
           comment : comment},
           {
@@ -86,7 +86,11 @@ router.delete('/:commentId',authMiddleware,async (req,res)=>{
   try{
       const user = res.locals.user // id 를 가져옴 2번
       const { commentId } = req.params;
-      const findUser = await Comments.findOne({ where :{commentId,}}) //아이디를 찾아옴  
+      const findUser = await Comments.findOne({ where :{commentId,}}) //아이디를 찾아옴 
+      if(!findUser) { ///예외처리 추가 했음
+        res.status(400).send({'message': "없는 댓글 입니다."})
+          return
+      }
        if(user.userId !== findUser.userId){ //예외 처리
         res.status(400).send({'message': "작성자와 일치 하지 않습니다."})
           return
