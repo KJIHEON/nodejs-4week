@@ -20,7 +20,7 @@ router.post('/',authMiddleware,async (req, res) => {   //post누르면 정보가
     // console.log(user.nickname)
     const { title, content, } = req.body; //저장해야할 정보를 받아와서 변수에 등록시킨다. req.body에 정보가 들어있음
     const createdAt = new Date(); //날짜 지정 yyyddmmm이거 쓰기 나중에 하자!!
-    const updateAt = new Date();
+    const updatedAt = new Date();
     await Post.create({ //게시글 작성 생성
       userId : user.userId,
       nickname : user.nickname,
@@ -28,7 +28,7 @@ router.post('/',authMiddleware,async (req, res) => {   //post누르면 정보가
       content : content,
       createdAt : createdAt,
       likes : 0,
-      updateAt : updateAt,
+      updatedAt : updatedAt,
     }); 
     res.status(201).send({'message': "게시글 작성에 성공하였습니다."});  
    }catch(error){ 

@@ -48,24 +48,24 @@ router.put('/posts/:postId/like',authMiddleware,async(req,res)=>{
   const {userId} = res.locals.user  //유저를 기준으로 아이디값을 가져옴
   const {postId} = req.params
   const likes =await Like.findOne({ where :{postId,userId}}) //좋아요한 게시물의 포스트 아이디 값과 유저 아이디를 가져옴
-  if (!likes){
-  await Post.increment({ //put같은거
+  if (!likes){ //좋아요가 없을시 
+  await Post.increment({ //put같은거 increment 증가 해주는 함수
     likes : 1},
     {
-    where : {postId : postId}
+    where : {postId : postId} 
   });
-  await Like.create({
+  await Like.create({ //생성 한다
     userId : userId,
     postId : postId,
     })
     res.status(201).send({"message":"게시글의 좋아요를 등록하였습니다."});
-  }else{
+  }else{ //있을시
     await Post.increment({ //put같은거
-      likes : -1},
+      likes : -1}, //포스트에 있는 좋아요의 -1해준다
       {
       where : {postId : postId}
     });
-    await Like.destroy({
+    await Like.destroy({ //postId,userId 삭제 한다 
       where: {
         postId: postId,
         userId: userId,
