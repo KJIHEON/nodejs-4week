@@ -9,12 +9,11 @@ const { Post } = require("../models")
 router.get('/posts/like',authMiddleware,async(req,res)=>{
   try{
       const {userId}  = res.locals.user  //1
-      const likess = await Like.findAll({
-        include : [Post],
-        where : {
-        userId : userId
-        }
-      })
+      // const likess = await Like.findAll({ 관계설정해서 정보보기
+      //   include : [Post],
+      // 
+      //   }
+      // })
       const likes = await Like.findAll({  //로그인 한 유저를 기준으로 좋아요한 게시물을 가져온다
         where :{
         userId 
@@ -41,7 +40,7 @@ router.get('/posts/like',authMiddleware,async(req,res)=>{
           data.push(datas) //data에 푸쉬 해준다
       }
       data.sort((a,b)=>b.likes-a.likes) //likes를 기준 많은순으로 내림차순 해준다
-      res.status(200).json({likess});
+      res.status(200).json({data});
   }catch(error){ 
     console.log(error)
     res.status(400).send({'message': "좋아요 에러 error"}) 
