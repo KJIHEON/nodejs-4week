@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Posts', {
       postId: {
-        allowNull: false,
+        allowNull: false, //필수인가?
         autoIncrement: true, //숫자 자동 매겨주는거
         primaryKey: true,
         type: Sequelize.INTEGER,

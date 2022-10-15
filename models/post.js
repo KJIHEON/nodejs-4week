@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      //나는 1대 N관계의 1이고
+      this.hasMany(models.Like,{ as : "Like",foreignKey : "PostId" }) 
     }
   }
   Post.init({

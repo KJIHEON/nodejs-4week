@@ -11,12 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      //나는 1대 N관계의 N임
+      this.belongsTo(models.Post,{ foreignKey : "postId" }) //테이블명임 하단에 모델 네임
     }
   }
   Like.init({
     id:{type : DataTypes.INTEGER,
       primaryKey:true},
-    postId: DataTypes.INTEGER,
+    postId:{
+      type : DataTypes.INTEGER,
+      references :{
+        model : 'Posts',
+        key : 'postId',
+        },   
+    }, 
     userId: DataTypes.INTEGER,
   }, {
     timestamps: false,

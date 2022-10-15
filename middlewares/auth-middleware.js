@@ -4,7 +4,7 @@ const { User } = require("../models");
 
 module.exports=(req,res,next)=>{
     const { token } = req.cookies //쿠키에 있는 토큰을 받아옴
-    // console.log(token)
+    console.log(token)
     // console.log(!token)
  if (!token){ //토큰이 없을시 예외처리
   res.status(401).send({

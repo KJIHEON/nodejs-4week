@@ -5,17 +5,24 @@ const { Like } = require("../models"); //폴더 밖에 나가서 경로를 찾�
 const { Post } = require("../models")
 
 
-//내가 좋아요한 게시물 가져오기
+// 내가 좋아요한 게시물 가져오기
 router.get('/posts/like',authMiddleware,async(req,res)=>{
   try{
-      const {userId}  = res.locals.user
+      const {userId}  = res.locals.user  //1
+      const likess = await Like.findAll({
+        include : [Post],
+        where : {
+        userId : userId
+        }
+      })
       const likes = await Like.findAll({  //로그인 한 유저를 기준으로 좋아요한 게시물을 가져온다
         where :{
         userId 
         }
       })
       const PostIds = likes.map((likes)=>likes.postId)  //불러온 게시물의 포스트 아이디를 찾는다.
-      const data = [] // 배열 생성
+      //[6,7,8,9]
+      const data = [] // 배열 생성 //6 7 8 9
       for (const postId of PostIds){ //for of 문을 이용하여 PostIds의 포스트 아이디를 하나씩 넣어준다.
         const row = await Post.findOne({ //반복문에 있는postId를 기준으로 해당하는 포스트의 게시물을 불러온다.
           where :{
@@ -34,7 +41,7 @@ router.get('/posts/like',authMiddleware,async(req,res)=>{
           data.push(datas) //data에 푸쉬 해준다
       }
       data.sort((a,b)=>b.likes-a.likes) //likes를 기준 많은순으로 내림차순 해준다
-      res.status(200).json({data});
+      res.status(200).json({likess});
   }catch(error){ 
     console.log(error)
     res.status(400).send({'message': "좋아요 에러 error"}) 
@@ -42,11 +49,13 @@ router.get('/posts/like',authMiddleware,async(req,res)=>{
 })
 
 
+
+
 //좋아요 하기
 router.put('/posts/:postId/like',authMiddleware,async(req,res)=>{
   try{
-  const {userId} = res.locals.user  //유저를 기준으로 아이디값을 가져옴
-  const {postId} = req.params
+  const {userId} = res.locals.user //유저를 기준으로 아이디값을 가져옴
+  const {postId} = req.params 
   const likes =await Like.findOne({ where :{postId,userId}}) //좋아요한 게시물의 포스트 아이디 값과 유저 아이디를 가져옴
   if (!likes){ //좋아요가 없을시 
   await Post.increment({ //put같은거 increment 증가 해주는 함수
@@ -78,6 +87,31 @@ router.put('/posts/:postId/like',authMiddleware,async(req,res)=>{
   res.status(400).send({'message': "좋아요 에러 error"}) 
   }   
 })
+
+// router.put("/posts/:postId/like",authMiddleware,async(req,res)=>{
+//   try{
+//   const {userId} = res.locals.user
+//   const {postId} = req.params;
+//   const Like = await Like.findOne({where:{postId, userId}});
+//   if(!Like){
+//   // 포스트에 있는 likes 값을 증가
+//   await Post.increment({likes : 1},{where:{postId:postId}})
+//   // 좋아요 한 게시물과 유저를 like에 추가?
+//   await Like.create({postId:postId,userId:userId})
+//   res.status(201).send({msg:"좋아요 등록"})
+//   }else{
+//   // 있으면? 취소를 해야지
+//   await Post.increment({likes:-1},{where:{postId:postId}})
+//   await Like.destroy({where:{postId:postId,userId:userId}})
+//   res.status(201).send({msg:"좋아요 취소"})
+//   }
+//   // like에서
+//   //
+//   }catch(error){
+//   console.log(error)
+//   res.status(400).send({msg:"좋아요 에러"})
+//   }
+//   })
 
 
 module.exports = router;

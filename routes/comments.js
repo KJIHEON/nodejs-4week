@@ -67,13 +67,13 @@ router.put('/:commentId', authMiddleware,async (req,res)=>{    //일단 아이�
        const findUser = await Comments.findOne({ where :{commentId,}}) //아이디를 찾아옴  
        if(user.userId !== findUser.userId){ //예외 처리
         res.status(400).send({'message': "작성자와 일치 하지 않습니다."})
-          return
+          return;
        }     
-        await Comments.update({ //put같은거
-          comment : comment},
+        await Comments.update(
+          {comment : comment},
           {
-          where : {commentId : commentId}
-        });
+          where : {commentId : commentId}}
+          );
         res.status(201).send({'message': "댓글을 수정했습니다"})            
       } catch(error){ //catch가 에러를 받는다.
         console.log(error)

@@ -56,6 +56,7 @@ router.post('/signup',async (req,res)=>{
  //로그인 
 router.post('/login',async (req,res)=>{
   try{
+    console.log(req.cookies.token)
     if(req.cookies.token){  //검증
       res.status(401).send({
       errorMessage : '이미 로그인이 되어있습니다.'
