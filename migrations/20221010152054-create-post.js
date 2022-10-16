@@ -31,10 +31,12 @@ module.exports = {
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
+        defaultValue: Sequelize.fn('now') //작성 시간을 보여줌
       },
       updatedAt: {
         type : Sequelize.DATE,
         allowNull: false,
+        defaultValue: Sequelize.fn('now')
       }
     });
   },

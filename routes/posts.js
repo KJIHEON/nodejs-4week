@@ -19,8 +19,6 @@ router.post('/',authMiddleware,async (req, res) => {   //post누르면 정보가
     // console.log(user.userId)
     // console.log(user.nickname)
     const { title, content, } = req.body; //저장해야할 정보를 받아와서 변수에 등록시킨다. req.body에 정보가 들어있음
-    const createdAt = new Date(); //날짜 지정 yyyddmmm이거 쓰기 나중에 하자!!
-    const updatedAt = new Date();
     await Post.create({ //게시글 작성 생성
       userId : user.userId,
       nickname : user.nickname,
@@ -96,16 +94,24 @@ router.get('/:postId' ,async (req,res)=>{
 // 게시글 수정하기
 router.put("/:postId",authMiddleware, async (req, res) => {
   try{
-      const { postId } = req.params;                 //아이디 정보를 받아옴 내가 put누르면 정보가 담겨있음
+      const  {userId} = res.locals.user 
+      const { postId } = req.params;  //6               //아이디 정보를 받아옴 내가 put누르면 정보가 담겨있음
       const {title, content} = req.body;   //바디에 내가 적으면 여기에 뜸 헷갈리면 찍어보자
+      console.log(userId)
+      const postIdOne = await Post.findOne({userId},{where:{postId}})
+      console.log(postIdOne.userId)
+      if(postIdOne.userId == userId){
       await Post.update({  //시퀄라이즈 언어 수정하는거
-        title : title, //타이틀과 콘텐트를 수정하겠다
-        content : content,},
+        title, //타이틀과 콘텐트를 수정하겠다
+        content,},
         {
-        where : {postId : postId} //포스트 아이디에 맞는걸 찾아서
+        where : {postId} //포스트 아이디에 맞는걸 찾아서
       });
    
     res.status(201).send({message: "게시글을 수정하였습니다."})
+    }else{
+      return res.status(400).send({message: "게시글을 수정 할 수 없습니다."}) 
+    }
     }catch(error){ 
     console.log(error)
     res.status(400).send({message: "수정 실패error"}) 

@@ -20,8 +20,6 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     nickname: DataTypes.STRING,
     comment: DataTypes.STRING,
-    createdAt : DataTypes.DATE,
-    updatedAt : DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Comments',

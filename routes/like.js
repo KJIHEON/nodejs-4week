@@ -9,11 +9,10 @@ const { Post } = require("../models")
 router.get('/posts/like',authMiddleware,async(req,res)=>{
   try{
       const {userId}  = res.locals.user  //1
-      // const likess = await Like.findAll({ 관계설정해서 정보보기
+      // const likess = await Like.findAll({ //관계설정해서 정보보기
       //   include : [Post],
-      // 
-      //   }
-      // })
+      
+      //   })
       const likes = await Like.findAll({  //로그인 한 유저를 기준으로 좋아요한 게시물을 가져온다
         where :{
         userId 

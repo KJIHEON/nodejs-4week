@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       //나는 1대 N관계의 1이고
-      this.hasMany(models.Like,{ as : "Like",foreignKey : "PostId" }) 
+      // this.hasOne(models.Like,{ as : "Like",foreignKey : "PostId" })
+      //N대 N관계의 N이고
+      // this.hasMany(models.Like,{ as : "Like",foreignKey : "PostId" }) 
     }
   }
   Post.init({
@@ -23,8 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     likes: DataTypes.INTEGER,
     title : DataTypes.STRING,
     content : DataTypes.STRING,
-    createdAt : DataTypes.DATE,
-    updatedAt : DataTypes.DATE,
   }, {
     timestamps: false,
     sequelize,
